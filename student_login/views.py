@@ -46,7 +46,7 @@ def change_profilepage(request):
         if pform.is_valid():
             curr_user=UserDetails.objects.all()
             curr_user.get(user=request.user).set_details(request)
-            return redirect('/login/loginpage')
+            return redirect('/login/change_password')
     else:
         pform=forms.ProfileForm()
     return render(request,"createuser.html",{ 'pform': pform})
