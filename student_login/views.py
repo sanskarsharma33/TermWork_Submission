@@ -31,6 +31,7 @@ def auth_view(request):
     if user is not None:
         login(request, user)
         curr_user=UserDetails.objects.all().get(user = user)
+        print(curr_user.first_name,curr_user.last_name,curr_user.email)
         if  curr_user.first_name != 'null' :
             print(curr_user.first_name,curr_user.last_name,curr_user.email)
             return(HttpResponse("OK"))
@@ -49,9 +50,13 @@ def change_profilepage(request):
             user = UserDetails.objects.all().get(user=request.user)
         except UserDetails.DoesNotExist:
             return HttpResponse(status=404)
-        serializer = UserSerializer(user, data=request.POST)
+        data=request.POST.copy()
+        data['user']=request.user.id
+        serializer = UserSerializer(user, data=data)
         if serializer.is_valid():
-            serializer.save()
+           serializer.save()
+        else:
+           return JsonResponse(serializer.errors, status=400)
         #return JsonResponse(serializer.data, status=201)
         return redirect('/login/change_password/')
     else:
