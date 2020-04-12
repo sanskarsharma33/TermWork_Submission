@@ -1,33 +1,17 @@
+from django.contrib.auth.models import  User,Group
 from rest_framework import serializers
 from .models import UserDetails
-from django.contrib.auth.models import User
-
-class RegisterUserDetailsSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = UserDetails
-        fields = ('user', 'first_name', 'last_name', 'email', 'role', 'year_of_intake')
-
-#    def create(self, validate_data):
-        
 
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = UserDetails
         fields = ('user', 'first_name', 'last_name', 'email', 'role', 'year_of_intake')
-
-
-class CreateUserSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = User
-        fields = ('id', 'username', 'password')
-        extra_kwargs = {'password': {'write_only': True}}
 
     def create(self, validated_data):
-        user = User.objects.create_user(validated_data['username'], None, validated_data['password'])
-        return user
-
-class UserSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = User
-        fields = ('id', 'username')
+        self.first_name = validated_data.get('first_name', self.first_name)
+        self.last_name = validated_data.get('last_name', self.last_name)
+        self.email = validated_data.get('email', self.email)
+        self.year_of_intake = validated_data.get('year_of_intake', self.year_of_intake)
+        self.save()
+        return self.user
